@@ -9,13 +9,17 @@ import { toast } from '@/components/ui/use-toast';
 
 interface FileUploaderProps {
   onFileUpload: (file: FileItem) => void;
+  fileInputRef?: React.RefObject<HTMLInputElement>;
 }
 
-const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
+const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload, fileInputRef }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [currentUploads, setCurrentUploads] = useState<{ file: File; id: string }[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const internalFileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Use provided ref or internal ref
+  const inputRef = fileInputRef || internalFileInputRef;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -80,7 +84,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
   };
 
   const openFileDialog = () => {
-    fileInputRef.current?.click();
+    inputRef.current?.click();
   };
 
   const cancelUpload = (id: string) => {
@@ -96,7 +100,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
     <div className="space-y-4">
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-          isDragging ? 'border-primary bg-primary/5' : 'border-gray-200'
+          isDragging ? 'border-primary bg-primary/5' : 'border-gray-700'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -104,7 +108,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
       >
         <input
           type="file"
-          ref={fileInputRef}
+          ref={inputRef}
           onChange={handleFileChange}
           className="hidden"
           multiple
@@ -112,9 +116,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
         
         <div className="flex flex-col items-center justify-center space-y-2">
           <Upload size={40} className="text-gray-400" />
-          <h3 className="text-lg font-medium">Drag & Drop files here</h3>
-          <p className="text-sm text-gray-500">or</p>
-          <Button onClick={openFileDialog} variant="outline">
+          <h3 className="text-lg font-medium font-mono">Drag & Drop files here</h3>
+          <p className="text-sm text-gray-500 font-mono">or</p>
+          <Button onClick={openFileDialog} variant="code" className="shadow-cyan-glow font-mono">
             Browse Files
           </Button>
         </div>
@@ -122,11 +126,11 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
 
       {currentUploads.length > 0 && (
         <div className="space-y-2 mt-4">
-          <h4 className="font-medium">Uploading {currentUploads.length} file(s)</h4>
+          <h4 className="font-medium font-mono">Uploading {currentUploads.length} file(s)</h4>
           {currentUploads.map(({ file, id }) => (
-            <div key={id} className="border rounded-md p-3">
+            <div key={id} className="border border-white/10 bg-black/20 rounded-md p-3">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm truncate max-w-[200px]">{file.name}</span>
+                <span className="text-sm truncate max-w-[200px] font-mono">{file.name}</span>
                 <Button 
                   variant="ghost" 
                   size="icon" 
@@ -137,7 +141,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
                 </Button>
               </div>
               <Progress value={uploadProgress[id] || 0} className="h-2" />
-              <span className="text-xs text-gray-500 mt-1 inline-block">
+              <span className="text-xs text-gray-500 mt-1 inline-block font-mono">
                 {Math.round(uploadProgress[id] || 0)}%
               </span>
             </div>

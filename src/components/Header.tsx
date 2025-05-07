@@ -1,8 +1,17 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Search, Grid, List, FolderPlus, Code } from 'lucide-react';
+import { Search, Grid, List, FolderPlus, Code, UserCircle, LogOut } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   onCreateFolder: () => void;
@@ -11,6 +20,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onCreateFolder, viewMode, setViewMode }) => {
+  const { user, logout } = useAuth();
+  
   return (
     <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 w-full">
       <div className="flex items-center gap-2">
@@ -55,6 +66,25 @@ const Header: React.FC<HeaderProps> = ({ onCreateFolder, viewMode, setViewMode }
           <FolderPlus size={16} />
           New Folder
         </Button>
+        
+        {user && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="ml-2">
+                <UserCircle size={16} className="mr-1" />
+                {user.email.split('@')[0]}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="font-mono text-xs">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

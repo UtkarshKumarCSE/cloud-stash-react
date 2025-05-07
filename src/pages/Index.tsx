@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Header from '@/components/Header';
 import FileUploader from '@/components/FileUploader';
 import FileList from '@/components/FileList';
@@ -12,14 +12,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
+  const { user } = useAuth();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPath, setCurrentPath] = useState<Folder[]>([]);
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get current folder or root
   const getCurrentFolder = (): Folder | null => {
@@ -36,6 +39,11 @@ const Index = () => {
   const getCurrentFolders = (): Folder[] => {
     const currentFolder = getCurrentFolder();
     return currentFolder ? currentFolder.folders : folders;
+  };
+
+  // Trigger file upload dialog
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   // Handle file upload
@@ -230,7 +238,7 @@ const Index = () => {
       <div className="grid md:grid-cols-[1fr_350px] gap-6">
         <div>
           {isEmpty ? (
-            <EmptyState />
+            <EmptyState onUpload={triggerFileUpload} />
           ) : (
             <FileList 
               files={displayFiles}
@@ -245,15 +253,15 @@ const Index = () => {
         </div>
         
         <div>
-          <FileUploader onFileUpload={handleFileUpload} />
+          <FileUploader onFileUpload={handleFileUpload} fileInputRef={fileInputRef} />
         </div>
       </div>
       
       <Dialog open={isCreateFolderOpen} onOpenChange={setIsCreateFolderOpen}>
-        <DialogContent>
+        <DialogContent className="bg-black/40 backdrop-blur-xl border border-white/10">
           <DialogHeader>
-            <DialogTitle>Create New Folder</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="font-mono">Create New Folder</DialogTitle>
+            <DialogDescription className="font-mono text-xs">
               Enter a name for your new folder.
             </DialogDescription>
           </DialogHeader>
@@ -262,7 +270,7 @@ const Index = () => {
             placeholder="Folder name"
             value={newFolderName}
             onChange={e => setNewFolderName(e.target.value)}
-            className="mt-4"
+            className="mt-4 font-mono tech-input"
             autoFocus
           />
           
