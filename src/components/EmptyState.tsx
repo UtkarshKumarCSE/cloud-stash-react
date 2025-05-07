@@ -11,11 +11,11 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-center p-10 text-center">
-      <div className="bg-gray-100 p-6 rounded-full mb-4">
-        <FolderOpen size={40} className="text-gray-400" />
+      <div className="bg-secondary p-6 rounded-full mb-4">
+        <FolderOpen size={40} className="text-secondary-foreground" />
       </div>
-      <h3 className="text-lg font-medium">It's empty here</h3>
-      <p className="text-gray-500 mt-2 max-w-md">{message}</p>
+      <h3 className="text-lg font-medium text-foreground">It's empty here</h3>
+      <p className="text-muted-foreground mt-2 max-w-md">{message}</p>
     </div>
   );
 };
