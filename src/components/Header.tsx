@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, Grid, List, FolderPlus, Code } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface HeaderProps {
@@ -13,12 +13,18 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onCreateFolder, viewMode, setViewMode }) => {
   return (
     <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 w-full">
-      <div className="text-2xl font-semibold">CloudStash</div>
+      <div className="flex items-center gap-2">
+        <Code className="h-7 w-7 text-primary animate-pulse-glow" />
+        <div className="text-2xl font-mono font-bold tracking-tight">
+          <span className="text-primary glow-text">Cloud</span>
+          <span className="text-primary/80">Stash</span>
+        </div>
+      </div>
       
       <div className="relative w-full md:w-1/3">
         <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
         <Input 
-          className="pl-8" 
+          className="pl-8 tech-input font-mono text-sm" 
           placeholder="Search files and folders" 
         />
       </div>
@@ -28,17 +34,25 @@ const Header: React.FC<HeaderProps> = ({ onCreateFolder, viewMode, setViewMode }
           variant={viewMode === 'grid' ? 'default' : 'outline'} 
           onClick={() => setViewMode('grid')} 
           size="sm"
+          className="font-mono text-xs"
         >
+          <Grid size={16} />
           Grid
         </Button>
         <Button 
           variant={viewMode === 'list' ? 'default' : 'outline'} 
           onClick={() => setViewMode('list')} 
           size="sm"
+          className="font-mono text-xs"
         >
+          <List size={16} />
           List
         </Button>
-        <Button onClick={onCreateFolder}>
+        <Button 
+          onClick={onCreateFolder}
+          className="font-mono text-xs"
+        >
+          <FolderPlus size={16} />
           New Folder
         </Button>
       </div>
