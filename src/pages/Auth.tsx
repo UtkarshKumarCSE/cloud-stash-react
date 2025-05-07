@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,20 +14,28 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
 import { Code, LogIn, User, Mail, Lock, Apple, AlertCircle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
   
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
     
     // In a real app, this would connect to an authentication service
-    // For now, we'll simulate successful authentication
     if (email && password) {
-      localStorage.setItem('cloudstash-user', JSON.stringify({ email }));
+      login({ email }); // Use the login function from AuthContext
       toast({
         title: isLogin ? "Logged in successfully" : "Account created successfully",
         description: "Welcome to CloudStash"
@@ -44,7 +52,7 @@ const Auth = () => {
 
   const handleGoogleAuth = () => {
     // In a real app, this would integrate with Google OAuth
-    localStorage.setItem('cloudstash-user', JSON.stringify({ email: 'user@example.com' }));
+    login({ email: 'user@example.com' });
     toast({
       title: "Signed in with Google",
       description: "Welcome to CloudStash"
@@ -54,7 +62,7 @@ const Auth = () => {
 
   const handleAppleAuth = () => {
     // In a real app, this would integrate with Apple OAuth
-    localStorage.setItem('cloudstash-user', JSON.stringify({ email: 'user@example.com' }));
+    login({ email: 'user@example.com' });
     toast({
       title: "Signed in with Apple",
       description: "Welcome to CloudStash"
